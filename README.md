@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/your-image-link.jpg" alt="Project Screenshot" width="700"/>
+  <img src="https://drive.google.com/file/d/1cNpqjy8QSl8l502btzXyE_jTjBv6EbAJ/view?usp=sharing" alt="Project Screenshot" width="700"/>
 </p>
 
 ---
