@@ -1,20 +1,18 @@
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, status, Query
+from database import db
+from schemas import ProductCreate, ProductResponse, ProductListResponse
 from bson import ObjectId
-from database import products_collection
-from models import ProductCreate, ProductResponse
 from typing import List, Optional
-from utils import get_pagination
+import re
 
 router = APIRouter()
 
-
 @router.post("/products", status_code=status.HTTP_201_CREATED)
 async def create_product(product: ProductCreate):
-    result = await products_collection.insert_one(product.dict())
-    return {"id": str(result.inserted_id)}
+    res = await db.products.insert_one(product.dict())
+    return {"id": str(res.inserted_id)}
 
-
-@router.get("/products")
+@router.get("/products", response_model=ProductListResponse)
 async def list_products(
     name: Optional[str] = None,
     size: Optional[str] = None,
@@ -23,23 +21,24 @@ async def list_products(
 ):
     query = {}
     if name:
-        query["name"] = {"$regex": name, "$options": "i"}
+        query["name"] = {"$regex": re.escape(name), "$options": "i"}
     if size:
-        query["sizes.size"] = size
+        query["sizes"] = {"$elemMatch": {"size": size}}
 
-    total = await products_collection.count_documents(query)
-    cursor = products_collection.find(query).skip(offset).limit(limit)
-
+    cursor = db.products.find(query).skip(offset).limit(limit)
     products = []
-    async for doc in cursor:
-        products.append({
-            "id": str(doc["_id"]),
-            "name": doc["name"],
-            "price": doc["price"]
-        })
+    async for product in cursor:
+        products.append(ProductResponse(
+            id=str(product["_id"]),
+            name=product["name"],
+            price=product["price"]
+        ))
 
     return {
         "data": products,
-        "page": get_pagination(offset, limit, total)
+        "page": {
+            "next": offset + limit,
+            "limit": len(products),
+            "previous": max(offset - limit, 0)
+        }
     }
-    
