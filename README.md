@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://drive.google.com/file/d/1cNpqjy8QSl8l502btzXyE_jTjBv6EbAJ/view?usp=sharing" alt="Project Screenshot" width="700"/>
+  <img src="https://drive.google.com/uc?export=view&id=1cNpqjy8QSl8l502btzXyE_jTjBv6EbAJ" alt="Project Screenshot" width="700"/>
 </p>
 
 ---
